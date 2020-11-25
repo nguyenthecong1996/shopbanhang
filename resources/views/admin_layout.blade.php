@@ -17,6 +17,8 @@
 
   <!-- Custom styles for this template-->
   <link href="{{asset('backend/css/sb-admin-2.min.css')}}" rel="stylesheet">
+  <script src="{{asset('common.js')}}"></script>
+  
 
 </head>
 
@@ -56,7 +58,7 @@
 
       <!-- Nav Item - Pages Collapse Menu -->
       <li class="nav-item">
-        <a class="nav-link collapsed" href="{{url('all-category')}}">
+        <a class="nav-link collapsed"  href="{{url('admin/all-category')}}">
           <i class="fas fa-fw fa-cog"></i>
            <span>Thể loại</span>
         </a>
@@ -64,7 +66,14 @@
 
       <!-- Nav Item - Utilities Collapse Menu -->
       <li class="nav-item">
-        <a class="nav-link collapsed" href="#">
+        <a class="nav-link collapsed" href="{{url('admin/all-brand')}}">
+          <i class="fas fa-fw fa-wrench"></i>
+          <span>Thương hiệu</span>
+        </a>
+      </li>
+
+       <li class="nav-item">
+        <a class="nav-link collapsed" href="{{url('admin/all-product')}}">
           <i class="fas fa-fw fa-wrench"></i>
           <span>Sản phẩm</span>
         </a>
@@ -318,6 +327,7 @@
     </div>
   </div>
 
+
   <!-- Bootstrap core JavaScript-->
   <script src="{{asset('backend/vendor/jquery/jquery.min.js')}}"></script>
   <script src="{{asset('backend/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
@@ -329,12 +339,12 @@
   <script src="{{asset('backend/js/sb-admin-2.min.js')}}"></script>
 
   <!-- Page level plugins -->
-  <script src="{{asset('backend/vendor/chart.js/Chart.min.js')}}"></script>
-
+<!--   <script src="{{asset('backend/vendor/chart.js/Chart.min.js')}}"></script>
+ -->
   <!-- Page level custom scripts -->
-  <script src="{{asset('backend/js/demo/chart-area-demo.js')}}"></script>
+ <!--  <script src="{{asset('backend/js/demo/chart-area-demo.js')}}"></script>
   <script src="{{asset('backend/js/demo/chart-pie-demo.js')}}"></script>
-
+ -->
 </body>
 
 </html>

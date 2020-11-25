@@ -14,20 +14,32 @@ class AdminController extends Controller
 
     public function allCategory(){
     	$getData = TblCategory::orderBy('updated_at', 'desc')->get();
-    	return view('backend.all_category')->with('getData', $getData);
+    	return view('backend.category.all_category')->with('getData', $getData);
     }
 
-    public function createCategory(Request $request){
+    public function createCategory(){
+
+    	return view('backend.category.add_category');
+    }
+
+    public function saveCategory(Request $request) {
     	$data = $request->all();
     	$request->validate([
           'category_name' => 'required|max:255',
           'category_desc' => 'required',
         ]);
-    	// $saveCategory->category_name = $data['category_name'];
-    	// $saveCategory->category_desc = $data['category_desc'];
-    	// $saveCategory->category_status = $data['category_status'];
-    	$post = TblCategory::create($data);
-    	 return response()->json(['code'=>200, 'message'=>'Post Created successfully','data' => $post], 200);
+    	$category = new TblCategory;
+    	$category->category_name = $data['category_name'];
+    	$category->category_desc = $data['category_desc'];
+    	$category->category_status = $data['category_status'];
+    	$category->save();
+    	return redirect('admin/all-category')->with('status', 'Tạo danh mục sản phẩm thành công');
+    }
+
+    public function showCategory($category_id){
+    	$showEdit = TblCategory::find($category_id);
+    	return view('backend.category.edit_category')->with('showEdit', $showEdit);
+        // return response()->json($showEdit);
     }
 
     public function updateCategory(Request $request,$category_id) {
@@ -40,17 +52,14 @@ class AdminController extends Controller
     	$post->category_desc = $request->category_desc;
     	$post->category_status = $request->category_status;
 		$post->save();
-		return response()->json(['code'=>200, 'message'=>'Post Updated successfully','data' => $post], 200);
+    	return redirect('admin/all-category')->with('status', 'Chỉnh sửa danh mục sản phẩm thành công');
+		// return response()->json(['code'=>200, 'message'=>'Post Updated successfully','data' => $post], 200);
     }
 
-    public function showCategory($category_id){
-    	$showEdit = TblCategory::find($category_id);
-        return response()->json($showEdit);
-    }
 
     public function deteleCategory($category_id){
     	$item = TblCategory::find($category_id);
 		$item->delete();
-        return response()->json(['code'=>200, 'message'=>'Post delele successfully','data' => $item], 200);
+        return redirect('admin/all-category')->with('status', 'Xóa danh mục sản phẩm thành công');
     }
 }
