@@ -5,11 +5,14 @@ namespace App\Http\Controllers\backend;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\TblCategory;
+use Illuminate\Support\Facades\Redirect;
+use Auth;
+use App\Models\User;
 
 class AdminController extends Controller
 {
-   	public function dashboard(){
-    	return view('backend.dashboard');
+    public function dashboard(){
+        return view('backend.dashboard');
     }
 
     public function allCategory(){

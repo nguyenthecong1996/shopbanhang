@@ -12,8 +12,13 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+	//login 
+	Route::get('/login', 'AuthController@login');
+	Route::post('/get-login', 'AuthController@getLogin');
+	Route::get('/logout', 'AuthController@logOut');
 
-Route::group(['namespace' => 'backend', 'prefix' => 'admin'], function () {
+Route::group(['middleware' => 'checkAdminLogin', 'namespace' => 'backend', 'prefix' => 'admin'], function () {
+
 	Route::get('/dashboard', 'AdminController@dashboard');
 	//category
 	Route::get('/all-category', 'AdminController@allCategory');
@@ -38,6 +43,10 @@ Route::group(['namespace' => 'backend', 'prefix' => 'admin'], function () {
 	Route::get('/edit-product/{id}', 'ProductController@showProduct');
 	Route::post('/update-product/{id}', 'ProductController@updateProduct');
 	Route::get('/delete-product/{id}', 'ProductController@deteleProduct');
+});
+
+Route::group(['namespace' => 'front'], function () {
+	Route::get('/', 'HomePageController@index');
 });
 
 //login facebook
