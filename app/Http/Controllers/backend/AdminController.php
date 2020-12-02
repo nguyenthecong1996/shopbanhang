@@ -31,7 +31,15 @@ class AdminController extends Controller
           'category_name' => 'required|max:255',
           'category_desc' => 'required',
         ]);
+        $category_image = $request->file('category_image');
     	$category = new TblCategory;
+        if($category_image) {
+            $get_name = current(explode('.', $category_image->getClientOriginalName()));
+            $get_type_image = $category_image->getClientOriginalExtension();
+            $new_name = time().$get_name.'.'.$get_type_image;
+            $category_image->move('uploads/', $new_name);
+            $category->category_image = $new_name;
+        }
     	$category->category_name = $data['category_name'];
     	$category->category_desc = $data['category_desc'];
     	$category->category_status = $data['category_status'];
@@ -51,6 +59,16 @@ class AdminController extends Controller
           'category_desc' => 'required',
         ]);
     	$post = TblCategory::find($category_id);
+        if (isset($data['category_image'])){
+            $category_image = $request->file('category_image');
+            if($category_image) {
+                $get_name = current(explode('.', $category_image->getClientOriginalName()));
+                $get_type_image = $category_image->getClientOriginalExtension();
+                $new_name = time().$get_name.'.'.$get_type_image;
+                $category_image->move('uploads/', $new_name);
+                $post->category_image = $new_name;
+            }
+        }
     	$post->category_name = $request->category_name;
     	$post->category_desc = $request->category_desc;
     	$post->category_status = $request->category_status;

@@ -17,6 +17,9 @@ use Illuminate\Support\Facades\Route;
 	Route::post('/get-login', 'AuthController@getLogin');
 	Route::get('/logout', 'AuthController@logOut');
 
+	Route::get('/register', 'AuthController@getRegister');
+	Route::post('/register', 'AuthController@postRegister');
+
 Route::group(['middleware' => 'checkAdminLogin', 'namespace' => 'backend', 'prefix' => 'admin'], function () {
 
 	Route::get('/dashboard', 'AdminController@dashboard');
@@ -47,6 +50,12 @@ Route::group(['middleware' => 'checkAdminLogin', 'namespace' => 'backend', 'pref
 
 Route::group(['namespace' => 'front'], function () {
 	Route::get('/', 'HomePageController@index');
+	Route::post('cart-product', 'HomePageController@cartProduct');
+
+	Route::get('add-cart', 'CartController@addCart');
+	Route::post('change-qty', 'CartController@changeQty');
+
+	
 });
 
 //login facebook

@@ -2,7 +2,7 @@
 @section('content')
 	<div class="panel-body">
 	    <div class="position-center">
-	        <form role="form" action="{{URL::to('/admin/update-brand/'.$showEdit->brand_id)}}" method="post">
+	        <form role="form" action="{{URL::to('/admin/update-brand/'.$showEdit->brand_id)}}" method="post" enctype="multipart/form-data">
 	        	{{ csrf_field() }}
 	        <div class="form-group">
 	            <label for="exampleInputEmail1">Tên danh mục</label>
@@ -12,6 +12,13 @@
 	            <label for="exampleInputPassword1">Mô tả danh mục</label>
 	            <textarea style="resize: none;" rows="5" name="brand_desc" class="form-control" id="exampleInputPassword1" placeholder="Mô tả danh mục">{{$showEdit->brand_desc}}</textarea>
 	        </div>
+	        <div class="form-group">
+                <label for="exampleInputEmail1">Ảnh thương hiệu</label>
+                <input type="file" class="form-control" name="brand_image">
+                @if ($errors->has('brand_image'))
+					<p class="text-danger">{{ $errors->first('brand_image') }}</p>
+				@endif
+            </div>
 	        <div class="form-group">
 	            <label for="exampleInputFile">Hiện thị</label>
 	           	<select name="brand_status" class="form-control input-sm m-bot15">

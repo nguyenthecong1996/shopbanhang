@@ -19,6 +19,7 @@
                       <th>Tên danh mục</th>
                       <th>Mô tả</th>
                       <th>Trạng thái</th>
+                      <th>Hình ảnh</th>
                       <th>Thời gian</th>
                       <th></th>
                     </tr>
@@ -28,6 +29,9 @@
                     <tr>
                       <td>{{$value->category_name}}</td>
                       <td>{{$value->category_desc}}</td>
+                      <td>
+                        <img src="{{asset('/uploads/'.$value->category_image)}}"  width="100" height="100">
+                      </td>
                       @if($value->category_status == 1)
                         <td>Hiện</td>
                       @else

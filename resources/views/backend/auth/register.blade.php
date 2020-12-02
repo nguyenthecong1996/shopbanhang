@@ -12,11 +12,11 @@
   <title>SB Admin 2 - Register</title>
 
   <!-- Custom fonts for this template-->
-  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+  <link href="{{asset('backend/vendor/fontawesome-free/css/all.min.css')}}" rel="stylesheet" type="text/css">
+  <link href="{{asset('backend/vendor/https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i')}}" rel="stylesheet">
 
   <!-- Custom styles for this template-->
-  <link href="css/sb-admin-2.min.css" rel="stylesheet">
+  <link href="{{asset('backend/css/sb-admin-2.min.css')}}" rel="stylesheet">
 
 </head>
 
@@ -34,29 +34,51 @@
               <div class="text-center">
                 <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
               </div>
-              <form class="user">
+              @if (session('message'))
+                    <div class="alert alert-danger hidden-text">
+                        {{ session('message') }}
+                    </div>
+                  @endif
+              <form class="user" action="{{URL::to('/register')}}" method="post">
+                {{ csrf_field() }}
                 <div class="form-group row">
                   <div class="col-sm-6 mb-3 mb-sm-0">
-                    <input type="text" class="form-control form-control-user" id="exampleFirstName" placeholder="First Name">
+                    <input type="text" class="form-control form-control-user" id="exampleFirstName" name="first_name" placeholder="First Name">
+                    @if ($errors->has('first_name'))
+                      <p class="text-danger">{{ $errors->first('first_name') }}</p>
+                    @endif
                   </div>
                   <div class="col-sm-6">
-                    <input type="text" class="form-control form-control-user" id="exampleLastName" placeholder="Last Name">
+                    <input type="text" class="form-control form-control-user" id="exampleLastName" name="last_name" placeholder="Last Name">
+                    @if ($errors->has('last_name'))
+                      <p class="text-danger">{{ $errors->first('last_name') }}</p>
+                    @endif
                   </div>
                 </div>
                 <div class="form-group">
-                  <input type="email" class="form-control form-control-user" id="exampleInputEmail" placeholder="Email Address">
+                  <input type="email" class="form-control form-control-user" id="exampleInputEmail" name="email" placeholder="Email Address">
+                  @if ($errors->has('email'))
+                      <p class="text-danger">{{ $errors->first('email') }}</p>
+                    @endif
                 </div>
                 <div class="form-group row">
                   <div class="col-sm-6 mb-3 mb-sm-0">
-                    <input type="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Password">
+                    <input type="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Password" name="password">
+                    @if ($errors->has('password'))
+                      <p class="text-danger">{{ $errors->first('password') }}</p>
+                    @endif
                   </div>
                   <div class="col-sm-6">
-                    <input type="password" class="form-control form-control-user" id="exampleRepeatPassword" placeholder="Repeat Password">
+                    <input type="password" class="form-control form-control-user" id="exampleRepeatPassword" placeholder="Repeat Password" name="repeat_password">
+                    @if ($errors->has('repeat_password'))
+                      <p class="text-danger">{{ $errors->first('repeat_password') }}</p>
+                    @endif
                   </div>
                 </div>
-                <a href="login.html" class="btn btn-primary btn-user btn-block">
+                <button class="btn btn-primary btn-user btn-block">
                   Register Account
-                </a>
+                </button>
+              </form>
                 <hr>
                 <a href="index.html" class="btn btn-google btn-user btn-block">
                   <i class="fab fa-google fa-fw"></i> Register with Google
@@ -64,7 +86,6 @@
                 <a href="index.html" class="btn btn-facebook btn-user btn-block">
                   <i class="fab fa-facebook-f fa-fw"></i> Register with Facebook
                 </a>
-              </form>
               <hr>
               <div class="text-center">
                 <a class="small" href="forgot-password.html">Forgot Password?</a>
@@ -81,14 +102,14 @@
   </div>
 
   <!-- Bootstrap core JavaScript-->
-  <script src="vendor/jquery/jquery.min.js"></script>
-  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="{{asset('backend/vendor/jquery/jquery.min.js')}}"></script>
+  <script src="{{asset('backend/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
 
   <!-- Core plugin JavaScript-->
-  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+  <script src="{{asset('backend/vendor/jquery-easing/jquery.easing.min.js')}}"></script>
 
   <!-- Custom scripts for all pages-->
-  <script src="js/sb-admin-2.min.js"></script>
+  <script src="{{asset('backend/js/sb-admin-2.min.js')}}"></script>
 
 </body>
 

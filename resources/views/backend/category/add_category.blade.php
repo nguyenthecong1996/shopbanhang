@@ -2,7 +2,7 @@
 @section('content')
 	<div class="panel-body">
 	    <div class="position-center">
-	        <form role="form" action="{{URL::to('/admin/save-category')}}" method="post">
+	        <form role="form" action="{{URL::to('/admin/save-category')}}" method="post" enctype="multipart/form-data">
 	        	{{ csrf_field() }}
 	        <div class="form-group">
 	            <label for="exampleInputEmail1">Tên danh mục</label>
@@ -19,6 +19,13 @@
 					<p class="text-danger">{{ $errors->first('category_desc') }}</p>
 				@endif
 	        </div>
+	        <div class="form-group">
+                <label for="exampleInputEmail1">Ảnh thể loại</label>
+                <input type="file" class="form-control" name="category_image">
+                @if ($errors->has('category_image'))
+					<p class="text-danger">{{ $errors->first('category_image') }}</p>
+				@endif
+            </div>
 	        <div class="form-group">
 	            <label for="exampleInputFile">Hiện thị</label>
 	           	<select name="category_status" class="form-control input-sm m-bot15">

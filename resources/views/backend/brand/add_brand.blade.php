@@ -2,7 +2,7 @@
 @section('content')
 	<div class="panel-body">
 	    <div class="position-center">
-	        <form role="form" action="{{URL::to('/admin/save-brand')}}" method="post">
+	        <form role="form" action="{{URL::to('/admin/save-brand')}}" method="post" enctype="multipart/form-data">
 	        	{{ csrf_field() }}
 	        <div class="form-group">
 	            <label for="exampleInputEmail1">Tên thương hiệu</label>
@@ -19,6 +19,13 @@
 					<p class="text-danger">{{ $errors->first('brand_desc') }}</p>
 				@endif
 	        </div>
+	        <div class="form-group">
+                <label for="exampleInputEmail1">Ảnh thương hiệu</label>
+                <input type="file" class="form-control" name="brand_image">
+                @if ($errors->has('brand_image'))
+					<p class="text-danger">{{ $errors->first('brand_image') }}</p>
+				@endif
+            </div>
 	        <div class="form-group">
 	            <label for="exampleInputFile">Hiện thị</label>
 	           	<select name="brand_status" class="form-control input-sm m-bot15">

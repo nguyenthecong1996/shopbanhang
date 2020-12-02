@@ -25,7 +25,15 @@ class BrandController extends Controller
           'brand_name' => 'required|max:255',
           'brand_desc' => 'required',
         ]);
+        $brand_image = $request->file('brand_image');
     	$brand = new TblBrand;
+        if($brand_image) {
+            $get_name = current(explode('.', $brand_image->getClientOriginalName()));
+            $get_type_image = $brand_image->getClientOriginalExtension();
+            $new_name = time().$get_name.'.'.$get_type_image;
+            $brand_image->move('uploads/', $new_name);
+            $brand->brand_image = $new_name;
+        }
     	$brand->brand_name = $data['brand_name'];
     	$brand->brand_desc = $data['brand_desc'];
     	$brand->brand_status = $data['brand_status'];
@@ -45,6 +53,16 @@ class BrandController extends Controller
           'brand_desc' => 'required',
         ]);
     	$post = TblBrand::find($brand_id);
+        if (isset($data['brand_image'])){
+            $brand_image = $request->file('brand_image');
+            if($brand_image) {
+                $get_name = current(explode('.', $brand_image->getClientOriginalName()));
+                $get_type_image = $brand_image->getClientOriginalExtension();
+                $new_name = time().$get_name.'.'.$get_type_image;
+                $brand_image->move('uploads/', $new_name);
+                $post->brand_image = $new_name;
+            }
+        }
     	$post->brand_name = $request->brand_name;
     	$post->brand_desc = $request->brand_desc;
     	$post->brand_status = $request->brand_status;
