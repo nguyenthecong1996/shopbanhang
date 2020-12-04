@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TblCategory extends Model
+class TblFeeShip extends Model
 {
     // use HasFactory;
     protected $primaryKey = 'fee_id'; 
     public $timestamps = true;
-    protected $table = 'tbl_categories';
-    protected $fillable = ['category_id', 'category_name', 'category_desc', 'category_status'];
+    protected $table = 'tbl_fee_ships';
+    protected $fillable = ['fee_id', 'fee_maxp', 'fee_matp', 'fee_maqh', 'fee_feesship'];
 }

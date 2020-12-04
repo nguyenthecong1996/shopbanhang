@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\front;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Http\Request;
 use App\Models\TblProduct;
 use App\Models\TblBrand;
@@ -20,19 +21,46 @@ class CartController extends Controller
     	$getCategory = $this->category;
     	$getBrand =  $this->brand;
     	$showCart = session('cart');
-		return view('frontend.cart', compact('getCategory', 'getBrand', 'showCart'));
+        $totalCart = 0;
+        // $te = array();
+        foreach ($showCart as $key => $value) {
+            // $te['show_cart'][$key] = $value;
+            $totalCart += $value['product_price']*$value['product_qty'];
+            // $te['totalCart'][$key] = $value;
+        }
+		return view('frontend.cart', compact('getCategory', 'getBrand', 'showCart', 'totalCart'));
     }
 
     public function changeQty(Request $request){
         $data = $request->all();
+        // dd($data);
         $qty = (int)$data['change_product_qty'];
         $check_qty = false; 
         $getCart = $request->session()->get('cart');
+        // dd($getCart);
         if (array_key_exists($data['product_id'], $getCart)) {
             $getCart[$data['product_id']]['product_qty'] = $qty;
+            $changePrice = $getCart[$data['product_id']]['product_price']*$qty;
             $check_qty = true;
         }
+        $totalCart = 0;
+        foreach ($getCart as $value) {
+           $totalCart += $value['product_price']*$value['product_qty']; 
+        }
         $request->session()->put('cart', $getCart);
-        return response()->json($check_qty);
+        return response()->json(['check_qty' => $check_qty, 'changePrice' =>$changePrice, 'totalCart' => $totalCart]);
+    }
+
+    public function removeItem(Request $request){
+        $data = $request->all();
+        $request->session()->forget('cart.'.$data['id_remove']);
+        $getCart = $request->session()->get('cart');
+
+        $totalCart = 0;
+        foreach ($getCart as $value) {
+           $totalCart += $value['product_price']*$value['product_qty']; 
+        }
+
+        return response()->json(['totalCart' => $totalCart]);
     }
 }

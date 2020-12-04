@@ -54,6 +54,8 @@ Route::group(['namespace' => 'front'], function () {
 
 	Route::get('add-cart', 'CartController@addCart');
 	Route::post('change-qty', 'CartController@changeQty');
+	Route::get('/remove-item', 'CartController@removeItem');
+
 
 	
 });

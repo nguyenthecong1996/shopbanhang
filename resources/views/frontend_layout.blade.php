@@ -25,6 +25,9 @@
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" />
+
+    <script src="{{asset('/common.js')}}"></script>
+    
     <script src="{{asset('/fontend/js/jquery.js')}}"></script>
     <script src="{{asset('/fontend/js/bootstrap.min.js')}}"></script>
     <script src="{{asset('/fontend/js/jquery.scrollUp.min.js')}}"></script>
