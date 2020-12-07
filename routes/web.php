@@ -46,6 +46,19 @@ Route::group(['middleware' => 'checkAdminLogin', 'namespace' => 'backend', 'pref
 	Route::get('/edit-product/{id}', 'ProductController@showProduct');
 	Route::post('/update-product/{id}', 'ProductController@updateProduct');
 	Route::get('/delete-product/{id}', 'ProductController@deteleProduct');
+
+	//transport
+	Route::get('/all-transport', 'FeeshipController@allTransport');
+	Route::get('/get-address', 'FeeshipController@getAddress');
+	Route::post('/add-fee', 'FeeshipController@addFee');
+	Route::post('/edit-fee', 'FeeshipController@editFee');
+
+
+	// Route::get('/create-transport', 'TransportController@createTransport');
+	// Route::post('/save-transport', 'TransportController@saveTransport');
+	// Route::get('/edit-transport/{id}', 'TransportController@showTransport');
+	// Route::post('/update-transport/{id}', 'TransportController@updateTransport');
+	// Route::get('/delete-transport/{id}', 'TransportController@deteleTransport');
 });
 
 Route::group(['namespace' => 'front'], function () {
@@ -56,6 +69,8 @@ Route::group(['namespace' => 'front'], function () {
 	Route::post('change-qty', 'CartController@changeQty');
 	Route::get('/remove-item', 'CartController@removeItem');
 
+	//shiping
+	Route::post('shipping_info', 'CartController@shippingInfo');
 
 	
 });

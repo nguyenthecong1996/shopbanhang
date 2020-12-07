@@ -69,21 +69,72 @@
 								<li>Phí vận chuyển<span>Free</span></li>
 								<li>Tổng tiền <span class="total_cart">{{$totalCart + 12}}</span></li>
 							</ul>
-							@if(Auth::check())
-								<a class="btn btn-default check_out" href="{{url('/checkout')}}">Thanh toán</a>
-							@else
-								<a class="btn btn-default check_out" href="{{url('/login-checkout')}}">Thanh toán</a>
-							@endif	
+							<button type="button" class="btn btn-default check_out"  data-toggle="modal" data-target="#exampleModalCenter">Thanh toán</button>
 						</div>
 					</div>
 				</div>
 			</div>
-		</section><!--/#do_action-->
+		</section>
+
+		<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="exampleModalLongTitle">Thông tin người nhận</h5>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <div class="modal-body">
+		        	<form class="data-form">
+		        		{{ csrf_field() }}
+			          <div class="form-group">
+			            <label for="recipient-name" class="col-form-label">Name:</label>
+			            <input type="text" class="form-control" name="shipping_name">
+			          </div>
+			          <div class="form-group">
+			            <label for="recipient-email" class="col-form-label">Email:</label>
+			            <input type="text" class="form-control" name="shipping_email">
+			          </div>
+			          <div class="form-group">
+			            <label for="recipient-phone" class="col-form-label">Phone:</label>
+			            <input type="text" class="form-control" name="shipping_phone">
+			          </div>
+			          <div class="form-group">
+			            <label for="recipient-address" class="col-form-label">Address:</label>
+			            <input type="text" class="form-control" name="shipping_address">
+			          </div>
+			          <div class="form-group">
+			            <label for="message-text" class="col-form-label">Message:</label>
+			            <textarea class="form-control" id="message-text" name="shipping_content"></textarea>
+			          </div>
+			        </form>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+		        <button type="button" class="btn btn-default submit-shipping">Save changes</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
 <script type="text/javascript">
 	$(document).ready(function(){
 
 		const minus = $('.add-down');
   		const plus = $('.add-up');
+
+  		$('.submit-shipping').click(function(e) {
+  			e.preventDefault();
+  			var data = $('.data-form').serialize();
+		    var url = '/shipping_info';
+		    var opiton = 'POST';
+
+		     _common.request(url, data, opiton)
+		    .then(function(response){
+		    	
+		    })
+  		});
+
   		plus.click(function(e) {
 		    e.preventDefault();
 		    var setThis = $(this);

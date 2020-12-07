@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Models\TblProduct;
 use App\Models\TblBrand;
 use App\Models\TblCategory;
+use App\Models\TblShipping;
+
 
 class CartController extends Controller
 {
@@ -62,5 +64,18 @@ class CartController extends Controller
         }
 
         return response()->json(['totalCart' => $totalCart]);
+    }
+
+    public function shippingInfo(Request $request){
+        $data = $request->all();
+        $getShipping = new TblShipping;
+        $getShipping->shipping_name = $data['shipping_name'];
+        $getShipping->shipping_email = $data['shipping_email'];
+        $getShipping->shipping_address = $data['shipping_address'];
+        $getShipping->shipping_phone = $data['shipping_phone'];
+        $getShipping->shipping_content = $data['shipping_content'];
+        $getShipping->save();
+        $getIdShippng = $getShipping->shipping_id;
+        dd( $getIdShippng);
     }
 }

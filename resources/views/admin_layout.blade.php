@@ -18,6 +18,16 @@
   <!-- Custom styles for this template-->
   <link href="{{asset('backend/css/sb-admin-2.min.css')}}" rel="stylesheet">
   <script src="{{asset('common.js')}}"></script>
+
+  <script src="{{asset('backend/vendor/jquery/jquery.min.js')}}"></script>
+  <script src="{{asset('backend/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="{{asset('backend/vendor/jquery-easing/jquery.easing.min.js')}}"></script>
+
+  <!-- Custom scripts for all pages-->
+  <script src="{{asset('backend/js/sb-admin-2.min.js')}}"></script>
+
   
 
 </head>
@@ -76,6 +86,13 @@
         <a class="nav-link collapsed" href="{{url('admin/all-product')}}">
           <i class="fas fa-fw fa-wrench"></i>
           <span>Sản phẩm</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{{url('admin/all-transport')}}">
+          <i class="fas fa-fw fa-wrench"></i>
+          <span>Phí vận chuyển</span>
         </a>
       </li>
       <!-- Divider -->
@@ -329,15 +346,7 @@
 
 
   <!-- Bootstrap core JavaScript-->
-  <script src="{{asset('backend/vendor/jquery/jquery.min.js')}}"></script>
-  <script src="{{asset('backend/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
-
-  <!-- Core plugin JavaScript-->
-  <script src="{{asset('backend/vendor/jquery-easing/jquery.easing.min.js')}}"></script>
-
-  <!-- Custom scripts for all pages-->
-  <script src="{{asset('backend/js/sb-admin-2.min.js')}}"></script>
-
+  
   <!-- Page level plugins -->
 <!--   <script src="{{asset('backend/vendor/chart.js/Chart.min.js')}}"></script>
  -->

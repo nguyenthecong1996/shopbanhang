@@ -11,5 +11,5 @@ class Wards extends Model
     protected $primaryKey = 'xaid'; 
     public $timestamps = true;
     protected $table = 'tbl_wards';
-    protected $fillable = ['name_xa', 'name_xa', 'type', 'maqh'];
+    protected $fillable = ['name_xa', 'xaid', 'type', 'maqh'];
 }
