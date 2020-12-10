@@ -12,4 +12,9 @@ class Provice extends Model
     public $timestamps = true;
     protected $table = 'tbl_provice';
     protected $fillable = ['maqh', 'name_quanhuyen', 'type', 'matp'];
+
+    public function Wards()
+    {
+        return $this->hasMany('App\Models\Wards', 'maqh', 'maqh');
+    }
 }

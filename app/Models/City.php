@@ -12,4 +12,14 @@ class City extends Model
     public $timestamps = true;
     protected $table = 'tbl_city';
     protected $fillable = ['matp', 'name_thanhpho', 'type'];
+
+    public function Provice()
+    {
+        return $this->hasMany('App\Models\Provice', 'matp', 'matp');
+    }
+
+    public function allAddress()
+	{
+	    return $this->Provice()->with('Wards');
+	}
 }

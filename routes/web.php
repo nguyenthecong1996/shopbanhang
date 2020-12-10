@@ -17,6 +17,10 @@ use Illuminate\Support\Facades\Route;
 	Route::post('/get-login', 'AuthController@getLogin');
 	Route::get('/logout', 'AuthController@logOut');
 
+	Route::get('/login-user', 'AuthController@loginUser');
+	Route::post('/get-login-user', 'AuthController@getLoginUser');
+
+
 	Route::get('/register', 'AuthController@getRegister');
 	Route::post('/register', 'AuthController@postRegister');
 
@@ -71,6 +75,9 @@ Route::group(['namespace' => 'front'], function () {
 
 	//shiping
 	Route::post('shipping_info', 'CartController@shippingInfo');
+
+	Route::get('payment', 'CartController@Payment');
+
 
 	
 });

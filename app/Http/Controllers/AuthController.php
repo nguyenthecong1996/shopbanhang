@@ -6,8 +6,17 @@ use Illuminate\Http\Request;
 use Auth;
 use Illuminate\Support\Facades\Redirect;
 use App\Models\User;
+use App\Models\TblUser;
+use App\Models\TblBrand;
+use App\Models\TblCategory;
 class AuthController extends Controller
 {
+    public function __construct()
+    {
+        $this->category = TblCategory::select('category_name', 'category_id', 'category_image')->where('category_status', 1)->orderBy('updated_at', 'desc')->get();
+        $this->brand = TblBrand::select('brand_name', 'brand_id', 'brand_image')->where('brand_status', 1)->orderBy('updated_at', 'desc')->get();
+    }
+
     public function login(){
     	if (Auth::check()) {
             return redirect('admin/dashboard');
@@ -22,8 +31,27 @@ class AuthController extends Controller
             'password' => $request->txtPassword,
             'role' => 9,
         ];
-        if (Auth::attempt($arr)){
+        if (Auth::guard('admin')->attempt($arr)){
             return redirect('admin/dashboard');
+        } else {
+            return Redirect::to('/login')->with('message', 'Mật khẩu hoặc tài khoản không chính xác');
+        }
+    }
+
+    public function loginUser(){
+        $getCategory = $this->category;
+        $getBrand =  $this->brand;
+       return view('frontend.auth', compact('getCategory', 'getBrand')); 
+    }
+
+    public function getLoginUser(Request $request){
+        $arr = [
+            'email' => $request->email,
+            'password' => $request->password,
+            // 'role' => 1,
+        ];
+        if (Auth::guard('writer')->attempt($arr)){
+            return redirect('/');
         } else {
             return Redirect::to('/login')->with('message', 'Mật khẩu hoặc tài khoản không chính xác');
         }

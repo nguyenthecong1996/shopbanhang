@@ -26,7 +26,7 @@
 		  </div>
 		  <div class="form-group">
 		    <label for="exampleFormControlSelect3">Xã/Phường</label>
-		    <select class="form-control form-control-sm choose" id="exampleFormControlSelect3" name="wards">
+		    <select class="form-control form-control-sm" id="exampleFormControlSelect3" name="wards">
 		      <option value="">Chọn xã phường</option>
 		    </select>
 		  </div>

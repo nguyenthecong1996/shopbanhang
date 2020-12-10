@@ -21,7 +21,6 @@
 							</tr>
 						</thead>
 						<tbody>
-
 							@if(session('cart'))
 								@foreach($showCart as $key => $item)
 								<tr class="cart_delete_{{$item['product_id']}}">
@@ -88,26 +87,44 @@
 		      <div class="modal-body">
 		        	<form class="data-form">
 		        		{{ csrf_field() }}
-			          <div class="form-group">
-			            <label for="recipient-name" class="col-form-label">Name:</label>
-			            <input type="text" class="form-control" name="shipping_name">
-			          </div>
-			          <div class="form-group">
-			            <label for="recipient-email" class="col-form-label">Email:</label>
-			            <input type="text" class="form-control" name="shipping_email">
-			          </div>
-			          <div class="form-group">
-			            <label for="recipient-phone" class="col-form-label">Phone:</label>
-			            <input type="text" class="form-control" name="shipping_phone">
-			          </div>
-			          <div class="form-group">
-			            <label for="recipient-address" class="col-form-label">Address:</label>
-			            <input type="text" class="form-control" name="shipping_address">
-			          </div>
-			          <div class="form-group">
-			            <label for="message-text" class="col-form-label">Message:</label>
-			            <textarea class="form-control" id="message-text" name="shipping_content"></textarea>
-			          </div>
+			          	<div class="form-group">
+			            	<label for="recipient-name" class="col-form-label">Name:</label>
+			            	<input type="text" class="form-control form-control-sm empty-value" name="shipping_name">
+			          	</div>
+			          	<div class="form-group">
+			            	<label for="recipient-email" class="col-form-label">Email:</label>
+			            	<input type="text" class="form-control form-control-sm empty-value" name="shipping_email">
+			          	</div>
+			          	<div class="form-group">
+			            	<label for="recipient-phone" class="col-form-label">Phone:</label>
+			            	<input type="text" class="form-control form-control-sm empty-value" name="shipping_phone">
+			          	</div>
+			          	<div class="form-group">
+				            <label for="message-text" class="col-form-label">Message:</label>
+				            <textarea class="form-control form-control-sm empty-value" id="message-text" name="shipping_content"></textarea>
+			          	</div>
+
+					   <div class="form-group">
+					    <label for="exampleFormControlSelect1">Thành phố</label>
+					    <select class="form-control form-control-sm choose empty-value" id="exampleFormControlSelect1" address="provice" name="city">
+					    	<option value="">Chọn thành phố</option>
+					    	@foreach($getCity as $key => $value)
+					      		<option value="{{$value->matp}}">{{$value->name_thanhpho}}</option>
+					      	@endforeach	
+					    </select>
+					  </div>
+					  <div class="form-group">
+					    <label for="exampleFormControlSelect2">Quận/Huyện</label>
+					    <select class="form-control form-control-sm choose provice empty-value" id="exampleFormControlSelect2" address="wards" name="provice" disabled>
+					    	<option value="">Chọn quận huyện</option>
+					    </select>
+					  </div>
+					  <div class="form-group">
+					    <label for="exampleFormControlSelect3">Xã/Phường</label>
+					    <select class="form-control form-control-sm wards empty-value" id="exampleFormControlSelect3" name="wards" disabled>
+					      <option value="">Chọn xã phường</option>
+					    </select>
+					  </div>
 			        </form>
 		      </div>
 		      <div class="modal-footer">
@@ -131,7 +148,9 @@
 
 		     _common.request(url, data, opiton)
 		    .then(function(response){
-		    	
+		    	if (response.code == 200) {
+		    		window.location.href = "{{url('/payment')}}"
+		    	}
 		    })
   		});
 
@@ -301,6 +320,57 @@
 		    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 	  	}
 
+	  	$(".choose").change(function(){
+		  var setThis = $(this);
+		  var url = '';
+		  var opiton = '';
+		  var data = {};
+		  // console.log(address)
+		  if (setThis.attr('address') == 'provice') {
+			$('.provice').prop("disabled", true);
+			$('.wards').prop("disabled", true);
+			$('.wards').find('option').remove().end().append('<option value="">Chọn xã phường</option>')
+		  	data = {
+		  		matp: setThis.val(),
+		  		address : 'provice'
+		  	};
+		  } else if (setThis.attr('address') == 'wards') {
+		  		data = {
+		  		maqh: setThis.val(),
+		  		address : 'wards'
+		  	};
+		  }
+		  url = '/admin/get-address';
+		  opiton = 'GET';
+
+		     _common.request(url, data, opiton)
+		    .then(function(response){
+		    	var options = "";
+		    	if (response['check_provice'] == 'check_provice') {
+		    		options += '<option value="">Chọn quận huyện</option>';
+					for(i in response['provice']) {
+					    options += '<option value= "' + response['provice'][i]['maqh'] + '">' + response['provice'][i]['name_quanhuyen'] + '</option>';
+					}
+					$('#exampleFormControlSelect2').html(options);
+					$('.provice').prop("disabled", false);
+		    	} else {
+		    		options += '<option value="">Chọn xã phường</option>';
+					for(i in response['wards']) {
+					    options += '<option value= "' + response['wards'][i]['xaid'] + '">' + response['wards'][i]['name_xa'] + '</option>';
+					}
+					$('#exampleFormControlSelect3').html(options);
+					$('.wards').prop("disabled", false);
+		    	}
+		    })
+		});
+
+		$(".modal").on("hidden.bs.modal", function(){
+			$('.wards').find('option').remove().end().append('<option value="">Chọn xã phường</option>').prop("disabled", true);
+			$('.provice').find('option').remove().end().append('<option value="">Chọn quận huyện</option>').prop("disabled", true);
+		    $('.empty-value').each(function() {
+		    	$(this).val('');
+		    })
+		});
 	});	
 </script>		
 @endsection

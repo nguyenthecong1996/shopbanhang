@@ -9,7 +9,10 @@ use App\Models\TblProduct;
 use App\Models\TblBrand;
 use App\Models\TblCategory;
 use App\Models\TblShipping;
-
+use App\Models\TblFeeShip;
+use App\Models\City;
+use App\Models\Provice;
+use App\Models\Wards;
 
 class CartController extends Controller
 {
@@ -20,6 +23,7 @@ class CartController extends Controller
     }
 
     public function addCart(){
+        $getCity = City::orderBy('name_thanhpho', 'asc')->get();
     	$getCategory = $this->category;
     	$getBrand =  $this->brand;
     	$showCart = session('cart');
@@ -30,7 +34,7 @@ class CartController extends Controller
             $totalCart += $value['product_price']*$value['product_qty'];
             // $te['totalCart'][$key] = $value;
         }
-		return view('frontend.cart', compact('getCategory', 'getBrand', 'showCart', 'totalCart'));
+		return view('frontend.cart', compact('getCategory', 'getBrand', 'showCart', 'totalCart', 'getCity'));
     }
 
     public function changeQty(Request $request){
@@ -67,15 +71,66 @@ class CartController extends Controller
     }
 
     public function shippingInfo(Request $request){
+
+        $getCategory = $this->category;
+        $getBrand =  $this->brand;
         $data = $request->all();
+
+        $getDataFee = TblFeeShip::with('City', 'Provice', 'Wards')->where('fee_matp', $data['city'])->where('fee_maqh', $data['provice'])->where('fee_maxp', $data['wards'])->first();
+
+        $getAllName = '';
+        $getFeeShip = 0;
+
+        if (!isset($getDataFee)) {
+            $getIdCity = City::where('matp', $data['city'])->with('allAddress')->first();
+            $getName = array(
+              'name_thanhpho' => $getIdCity['name_thanhpho']  
+            );
+            foreach ($getIdCity['allAddress'] as $value) {
+                if ($data['provice'] == $value['maqh']) {
+                    $getName['name_quanhuyen'] = $value['name_quanhuyen'];
+                    foreach ($value['Wards'] as $children) {
+                        if ($data['wards'] == $children['xaid']) {
+                            $getName['name_xa'] = $children['name_xa'];
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+            $getAllName = $getName['name_xa'].' - '. $getName['name_quanhuyen'].' - '.$getName['name_thanhpho'];
+            $getFeeShip = 100000;
+        } else {
+            $getAllName = $getDataFee['Wards']['name_xa'].' - '. $getDataFee['Provice']['name_quanhuyen'].' - '.$getDataFee['City']['name_thanhpho'];
+             $getFeeShip = $getDataFee['fee_feesship'];
+        }
         $getShipping = new TblShipping;
         $getShipping->shipping_name = $data['shipping_name'];
         $getShipping->shipping_email = $data['shipping_email'];
-        $getShipping->shipping_address = $data['shipping_address'];
+        $getShipping->shipping_address = $getAllName;
         $getShipping->shipping_phone = $data['shipping_phone'];
         $getShipping->shipping_content = $data['shipping_content'];
         $getShipping->save();
         $getIdShippng = $getShipping->shipping_id;
-        dd( $getIdShippng);
+
+        $getFeeAndAdd = array(
+            'shipping_id' => $getIdShippng,
+            'fee_feeship' =>  $getFeeShip,
+        );
+        $request->session()->put('fee', $getFeeAndAdd);
+
+        $getFee = $request->session()->get('fee');
+
+        return response()->json(['code' =>200]);
+    }
+
+    public function Payment(){
+        $getCategory = $this->category;
+        $getBrand =  $this->brand;
+        $getFee = session('fee');
+        if (isset($getFee)) {
+            $getAdd = TblShipping::where('shipping_id', $getFee['shipping_id'])->first();
+        }
+        return view('frontend.payment', compact('getCategory', 'getBrand', 'getAdd'));
     }
 }
