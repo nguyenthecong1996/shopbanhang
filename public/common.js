@@ -1,6 +1,7 @@
  window._common = {
  	request: function(url, data, option) {
  		if(!option) option = {};
+ 		if(!data) data = {};
  	 return new Promise(function(resolve, reject){
       var ajaxRequest = {
         headers: {},

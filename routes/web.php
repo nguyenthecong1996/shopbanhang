@@ -57,12 +57,11 @@ Route::group(['middleware' => 'checkAdminLogin', 'namespace' => 'backend', 'pref
 	Route::post('/add-fee', 'FeeshipController@addFee');
 	Route::post('/edit-fee', 'FeeshipController@editFee');
 
+	//order
+	Route::post('/order-place', 'OrderController@orderPlace');
+	Route::get('/all-order', 'OrderController@allOrder');
+	Route::get('/detail-order/{id}', 'OrderController@detailOrder');
 
-	// Route::get('/create-transport', 'TransportController@createTransport');
-	// Route::post('/save-transport', 'TransportController@saveTransport');
-	// Route::get('/edit-transport/{id}', 'TransportController@showTransport');
-	// Route::post('/update-transport/{id}', 'TransportController@updateTransport');
-	// Route::get('/delete-transport/{id}', 'TransportController@deteleTransport');
 });
 
 Route::group(['namespace' => 'front'], function () {
@@ -78,7 +77,7 @@ Route::group(['namespace' => 'front'], function () {
 
 	Route::get('payment', 'CartController@Payment');
 
-
+	Route::get('/check-user', 'CartController@checkUser');
 	
 });
 

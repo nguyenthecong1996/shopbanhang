@@ -12,6 +12,8 @@ class TblUser extends Authenticatable
     protected $guard = 'writer';
     protected $table = 'tbl_users';
 
+    protected $primaryKey = 'id'; 
+
     protected $fillable = [
         'email',
         'password',
@@ -21,4 +23,9 @@ class TblUser extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function TblShipping()
+    {
+        return $this->hasMany('App\Models\TblShipping', 'id', 'user_id');
+    }
 }

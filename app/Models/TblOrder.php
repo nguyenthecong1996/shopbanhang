@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TblShipping extends Model
+class TblOrder extends Model
 {
-    // use HasFactory;
-    protected $primaryKey = 'shipping_id'; 
+    use HasFactory;
     public $timestamps = true;
-    protected $table = 'tbl_shippings';
-    protected $fillable = ['shipping_id', 'shipping_name', 'shipping_email', 'shipping_address', 'shipping_phone', 'shipping_content'];
+    protected $table = 'tbl_orders';
+    protected  $primaryKey = 'order_id';
+    protected $fillable = ['user_id', 'order_total', 'payment_status', 'order_status'];
 
     public function TblUser()
     {

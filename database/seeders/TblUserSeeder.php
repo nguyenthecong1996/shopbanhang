@@ -15,7 +15,7 @@ class TblUserSeeder extends Seeder
     public function run()
     {
         $data = [
-        	'email' => 'admin@gmail.com',
+        	'email' => 'thecong@gmail.com',
         	'name' => 'cong',
         	'password' => bcrypt('123456'),
         	'role' => 1

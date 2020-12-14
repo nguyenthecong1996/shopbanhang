@@ -5,6 +5,7 @@ namespace App\Http\Controllers\front;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Http\Request;
+use Auth;
 use App\Models\TblProduct;
 use App\Models\TblBrand;
 use App\Models\TblCategory;
@@ -13,6 +14,8 @@ use App\Models\TblFeeShip;
 use App\Models\City;
 use App\Models\Provice;
 use App\Models\Wards;
+use App\Models\TblUser;
+
 
 class CartController extends Controller
 {
@@ -99,7 +102,7 @@ class CartController extends Controller
                 }
             }
             $getAllName = $getName['name_xa'].' - '. $getName['name_quanhuyen'].' - '.$getName['name_thanhpho'];
-            $getFeeShip = 100000;
+            $getFeeShip = 10000;
         } else {
             $getAllName = $getDataFee['Wards']['name_xa'].' - '. $getDataFee['Provice']['name_quanhuyen'].' - '.$getDataFee['City']['name_thanhpho'];
              $getFeeShip = $getDataFee['fee_feesship'];
@@ -110,12 +113,14 @@ class CartController extends Controller
         $getShipping->shipping_address = $getAllName;
         $getShipping->shipping_phone = $data['shipping_phone'];
         $getShipping->shipping_content = $data['shipping_content'];
+        $getShipping->fee_ship = $getFeeShip;
+        $getShipping->check_default = 1;
+        $getShipping->user_id = Auth::guard('writer')->user()['id'];
         $getShipping->save();
         $getIdShippng = $getShipping->shipping_id;
 
         $getFeeAndAdd = array(
-            'shipping_id' => $getIdShippng,
-            'fee_feeship' =>  $getFeeShip,
+            'shipping_id' => $getIdShippng
         );
         $request->session()->put('fee', $getFeeAndAdd);
 
@@ -124,13 +129,36 @@ class CartController extends Controller
         return response()->json(['code' =>200]);
     }
 
-    public function Payment(){
+    public function Payment(Request $request){
         $getCategory = $this->category;
         $getBrand =  $this->brand;
         $getFee = session('fee');
         if (isset($getFee)) {
             $getAdd = TblShipping::where('shipping_id', $getFee['shipping_id'])->first();
+            $request->session()->forget('fee');
+        } else {
+            $id = Auth::guard('writer')->user()['id'];
+            $getAdd = TblShipping::where('user_id', $id)->latest('shipping_id')->first();
         }
-        return view('frontend.payment', compact('getCategory', 'getBrand', 'getAdd'));
+
+        $totalCart = 0;
+        $getCart = session('cart');
+        foreach ($getCart as $value) {
+           $totalCart += $value['product_price']*$value['product_qty']; 
+        }
+        // get tat ca ban ghi
+         $getAddAll = TblShipping::where('user_id', $id)->get();
+        return view('frontend.payment', compact('getCategory', 'getBrand', 'getAdd', 'totalCart', 'getAddAll'));
+    }
+
+    public function checkUser(){
+        $id = Auth::guard('writer')->user()['id'];
+        $checkAuth = false;
+        $getData = TblShipping::where('user_id', $id)->latest('shipping_id')->first();
+        if (isset($getData)) {
+            $checkAuth = true;
+        }
+
+        return response()->json($checkAuth);
     }
 }

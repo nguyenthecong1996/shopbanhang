@@ -18,7 +18,8 @@ class AuthController extends Controller
     }
 
     public function login(){
-    	if (Auth::check()) {
+    	if (Auth::guard('admin')->check()) {
+            // dd(Auth::guard('admin')->user());
             return redirect('admin/dashboard');
         } else {
             return view('backend.auth.login');
@@ -40,8 +41,12 @@ class AuthController extends Controller
 
     public function loginUser(){
         $getCategory = $this->category;
-        $getBrand =  $this->brand;
-       return view('frontend.auth', compact('getCategory', 'getBrand')); 
+        $getBrand =  $this->brand; 
+        if (Auth::guard('writer')->check()) {
+            return redirect('/');
+        } else {
+            return view('frontend.auth', compact('getCategory', 'getBrand'));
+        }
     }
 
     public function getLoginUser(Request $request){
@@ -50,6 +55,7 @@ class AuthController extends Controller
             'password' => $request->password,
             // 'role' => 1,
         ];
+        // dd(Auth::guard('writer')->check());
         if (Auth::guard('writer')->attempt($arr)){
             return redirect('/');
         } else {

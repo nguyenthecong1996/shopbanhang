@@ -88,11 +88,17 @@
           <span>Sản phẩm</span>
         </a>
       </li>
-
       <li class="nav-item">
         <a class="nav-link collapsed" href="{{url('admin/all-transport')}}">
           <i class="fas fa-fw fa-wrench"></i>
           <span>Phí vận chuyển</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{{url('admin/all-order')}}">
+          <i class="fas fa-fw fa-wrench"></i>
+          <span>Đơn hàng</span>
         </a>
       </li>
       <!-- Divider -->

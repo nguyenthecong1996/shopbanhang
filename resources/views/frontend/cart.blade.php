@@ -68,7 +68,7 @@
 								<li>Phí vận chuyển<span>Free</span></li>
 								<li>Tổng tiền <span class="total_cart">{{$totalCart + 12}}</span></li>
 							</ul>
-							<button type="button" class="btn btn-default check_out"  data-toggle="modal" data-target="#exampleModalCenter">Thanh toán</button>
+							<button type="button" class="btn btn-default check_out check-user" data-toggle="modal">Thanh toán</button>
 						</div>
 					</div>
 				</div>
@@ -133,12 +133,28 @@
 		      </div>
 		    </div>
 		  </div>
-		</div>
+		</div>zz
 <script type="text/javascript">
 	$(document).ready(function(){
-
 		const minus = $('.add-down');
   		const plus = $('.add-up');
+
+  		$('.check-user').click(function(e){
+  			e.preventDefault();
+		    var url = '/check-user';
+		    var opiton = 'get';
+		    var data = {};
+
+		     _common.request(url, data, opiton)
+		    .then(function(response){
+		    	if (response) {
+		    		window.location.href = "{{url('/payment')}}"
+		    	} else {
+		    		$('#exampleModalCenter').modal('show');
+		    	}
+		    })
+
+  		})
 
   		$('.submit-shipping').click(function(e) {
   			e.preventDefault();

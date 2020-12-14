@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\TblProduct;
 use App\Models\TblBrand;
 use App\Models\TblCategory;
+use Auth;
+
 
 class HomePageController extends Controller
 {
@@ -16,6 +18,7 @@ class HomePageController extends Controller
         $this->brand = TblBrand::select('brand_name', 'brand_id', 'brand_image')->where('brand_status', 1)->orderBy('updated_at', 'desc')->get();
     }
 	public function index(){
+		// dd(Auth::guard('writer')->user());
 		$getCategory = $this->category;
     	$getBrand =  $this->brand;
     	$all_product = TblProduct::orderBy('updated_at', 'desc')->where('product_status', 1)->get();
