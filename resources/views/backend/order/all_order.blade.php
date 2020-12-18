@@ -25,9 +25,11 @@
                     </tr>
                   </thead>
                   <tbody>
-                    @foreach($getData as $value)
+                    @foreach($data as $value)
                     <tr>
-                      <td>{{$value['TblUser']['name']}}</td>
+                      <td>
+                        {{$value['name_user']}}
+                      </td>
                       <td>{{$value['order_total']}}</td>
                       <td>
                       	@foreach (config('common.order_status') as $key => $item)
@@ -45,8 +47,8 @@
                       </td>
                       <td>{{date('d-m-Y H:i', strtotime($value['updated_at']))}}</td>
                       <td>
-                        <a href="{{URL::to('/admin/detail-order/'.$value->order_id)}}" class="btn btn-info" role="button">Chi tiết</a> 
-                        <a href="{{URL::to('/admin/delete-category/'.$value->order_id)}}" class="btn btn-danger" role="button" onclick="confirm('Are you sure to delete?');">Xóa</a>
+                        <a href="{{URL::to('/admin/detail-order/'.$value['order_id'])}}" class="btn btn-info" role="button">Chi tiết</a> 
+                        <a href="{{URL::to('/admin/delete-category/'.$value['order_id'])}}" class="btn btn-danger" role="button" onclick="confirm('Are you sure to delete?');">Xóa</a>
                       </td>
                     </tr>
                     @endforeach

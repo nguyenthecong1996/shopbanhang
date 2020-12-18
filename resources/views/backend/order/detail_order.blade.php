@@ -16,7 +16,7 @@
         <tbody>
           <tr>
             <td>
-              {{Auth::guard('writer')->user()['name'];}}
+                {{$getUser['name']}}
             </td>
           </tr>
         </tbody>
@@ -41,13 +41,13 @@
         <tbody>
            <tr>
             <td>
-              {{$getOrderById['shipping_name']}}
+              {{$getInfoShipping['shipping_name']}}
             </td>
              <td>
-              {{$getOrderById['shipping_phone']}}
+              {{$getInfoShipping['shipping_phone']}}
             </td>
              <td>
-              {{$getOrderById['shipping_address']}}
+              {{$getInfoShipping['shipping_address']}}
             </td>
           </tr>
         </tbody>
@@ -62,22 +62,37 @@
         <table class="table table-striped b-t b-light">
           <thead>
             <tr>
+              <th>STT</th>
               <th>Tên sản phẩm</th>
-              <th>Tổng tiền</th>
               <th>Số lượng</th>
+              <th>Gía tiền</th>
+              <th>Tổng tiền</th>
               <!-- <th>Ngày Thêm</th> -->
               <th style="width:30px;"></th>
             </tr>
           </thead>
+          @php
+            $total = 0;
+            $i = 0;
+          @endphp
           <tbody>
-            @foreach($getOrderById['product_detail'] as $item)
+            @foreach($getOrderDetail as $item)
+              @php
+                $total += $item->product_price*$item->product_sales_quantity;
+              @endphp
             <tr>
+              <td>{{$i++}}</td>
               <td>{{$item->product_name}}</td>
-              <td>{{$item->product_price*$item->product_sales_quantity}}</td>
               <td>{{$item->product_sales_quantity}}</td>
+              <td>{{$item->product_price}}</td>
+              <td>{{$item->product_price*$item->product_sales_quantity}}</td>
             </tr>
-             
           @endforeach
+            <tr>
+              <td>
+                Tổng tiền : {{$total}}    
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>

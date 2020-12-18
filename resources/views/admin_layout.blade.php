@@ -88,6 +88,13 @@
           <span>Sản phẩm</span>
         </a>
       </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{{url('admin/all-coupon')}}">
+          <i class="fas fa-fw fa-wrench"></i>
+          <span>Mã giảm giá</span>
+        </a>
+      </li>
       <li class="nav-item">
         <a class="nav-link collapsed" href="{{url('admin/all-transport')}}">
           <i class="fas fa-fw fa-wrench"></i>

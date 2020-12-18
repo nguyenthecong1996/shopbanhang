@@ -62,6 +62,14 @@ Route::group(['middleware' => 'checkAdminLogin', 'namespace' => 'backend', 'pref
 	Route::get('/all-order', 'OrderController@allOrder');
 	Route::get('/detail-order/{id}', 'OrderController@detailOrder');
 
+	//coupon
+	Route::get('/all-coupon', 'CouponCotroller@allCoupon');
+	Route::get('/add-coupon', 'CouponCotroller@addCoupon');
+	Route::post('/save-coupon', 'CouponCotroller@saveCoupon');
+	Route::get('/edit-coupon/{id}', 'CouponCotroller@editCoupon');
+	Route::post('/update-coupon/{id}', 'CouponCotroller@updateCoupon');
+	Route::get('/delete-coupon/{id}', 'CouponCotroller@deteleCoupon');
+
 });
 
 Route::group(['namespace' => 'front'], function () {
@@ -78,6 +86,11 @@ Route::group(['namespace' => 'front'], function () {
 	Route::get('payment', 'CartController@Payment');
 
 	Route::get('/check-user', 'CartController@checkUser');
+
+	Route::get('/hand-cash', 'CartController@handCash');
+
+	Route::get('/get-coupon', 'CartController@getCoupon');
+	Route::post('/check-coupon', 'CartController@checkCoupon');
 	
 });
 

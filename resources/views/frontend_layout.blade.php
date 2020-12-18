@@ -499,4 +499,59 @@
         
     </footer><!--/Footer-->
 </body>
+<script type="text/javascript">
+    $(".choose").change(function(){
+          var setThis = $(this);
+          var url = '';
+          var opiton = '';
+          var data = {};
+          // console.log(address)
+          if (setThis.attr('address') == 'provice') {
+            $('.provice').prop("disabled", true);
+            $('.wards').prop("disabled", true);
+            $('.wards').find('option').remove().end().append('<option value="">Chọn xã phường</option>')
+            data = {
+                matp: setThis.val(),
+                address : 'provice'
+            };
+          } else if (setThis.attr('address') == 'wards') {
+                data = {
+                maqh: setThis.val(),
+                address : 'wards'
+            };
+          }
+          url = '/admin/get-address';
+          opiton = 'GET';
+
+             _common.request(url, data, opiton)
+            .then(function(response){
+                var options = "";
+                if (response['check_provice'] == 'check_provice') {
+                    options += '<option value="">Chọn quận huyện</option>';
+                    for(i in response['provice']) {
+                        options += '<option value= "' + response['provice'][i]['maqh'] + '">' + response['provice'][i]['name_quanhuyen'] + '</option>';
+                    }
+                    $('#exampleFormControlSelect2').html(options);
+                    $('.provice').prop("disabled", false);
+                } else {
+                    options += '<option value="">Chọn xã phường</option>';
+                    for(i in response['wards']) {
+                        options += '<option value= "' + response['wards'][i]['xaid'] + '">' + response['wards'][i]['name_xa'] + '</option>';
+                    }
+                    $('#exampleFormControlSelect3').html(options);
+                    $('.wards').prop("disabled", false);
+                }
+            })
+        });
+
+        $(".modal").on("hidden.bs.modal", function(){
+            $('.wards').find('option').remove().end().append('<option value="">Chọn xã phường</option>').prop("disabled", true);
+            $('.provice').find('option').remove().end().append('<option value="">Chọn quận huyện</option>').prop("disabled", true);
+            $('.empty-value').each(function() {
+                $(this).val('');
+            })
+
+            $('.data-form1').html('');
+        });
+</script>
 </html>

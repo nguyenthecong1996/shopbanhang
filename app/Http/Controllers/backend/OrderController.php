@@ -21,11 +21,12 @@ class OrderController extends Controller
 
     public function orderPlace(Request $request){
     	$data = $request->all();
-    	dd($data);
+    	// dd($data);
     	$saveOrder = new TblOrder;
     	$saveOrder->user_id = Auth::guard('writer')->user()['id'];
     	$saveOrder->payment_status = $data['payment_option'];
     	$saveOrder->order_status = 1;
+        $saveOrder->shipping_id = $data['shipping_id'];
     	$saveOrder->order_total = $data['total_cart'];
     	$saveOrder->save();
 
@@ -43,22 +44,34 @@ class OrderController extends Controller
     	$getBrand =  $this->brand;
     	if ( $data['payment_option'] == 2) {
     		$request->session()->forget('cart');
-        	return view('frontend.handcash', compact('getCategory', 'getBrand'));
+        	return response()->json(['code' =>200]);
     	} else {
         	return abort(404);
     	} 
     }
 
     public function allOrder(){
-    	$getData = TblOrder::with('TblUser')->get();
-    	return view('backend.order.all_order', compact('getData'));
+    	$getData = TblOrder::with('shipping')->orderBy('updated_at', 'desc')->get();
+        $data = [];
+        foreach ($getData as $key => $item) {
+            $getUser = TblUser::where('id',  $item->user_id)->first();
+            $data[$key]['shipping_id'] = $item['shipping_id'];
+            $data[$key]['order_total'] = $item['order_total'];
+            $data[$key]['order_id'] = $item['order_id'];
+            $data[$key]['payment_status'] = $item['payment_status'];
+            $data[$key]['order_status'] = $item['order_status'];
+            $data[$key]['updated_at'] = $item['updated_at'];
+            $data[$key]['name_user'] = $getUser['name'];
+        }
+    	return view('backend.order.all_order', compact('data'));
     }
 
     public function detailOrder($id_order){
     	$userid = TblOrder::find($id_order);
-    	$getInfoShipping = TblShipping::where('user_id', $userid->user_id)->get();
-    	dd($getInfoShipping);
-    	return view('backend.detail_order');
+    	$getInfoShipping = $userid->shipping()->where('shipping_id', $userid->shipping_id)->first();
+        $getUser = TblUser::where('id',  $getInfoShipping->user_id)->first();
+        $getOrderDetail = $userid->orderDetail()->get();
+    	return view('backend.order.detail_order', compact('getInfoShipping', 'getUser', 'getOrderDetail'));
     	// dd($id_order);
     }
 }

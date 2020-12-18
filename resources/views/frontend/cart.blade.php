@@ -57,15 +57,48 @@
 				</div>
 			</div>
 		</section>
+		@php
+			$totalCoupon = 0;
+		@endphp
 		<section id="do_action" >
 			<div class="container" style="width: 950px">
 				<div class="row">
 					<div class="col-sm-6">
-						<div class="total_area">
+						<div class="total_area" style="border: 1px solid #E6E4DF;
+						    color: #696763;
+						    padding: 0px 25px 30px 0;
+						    margin-bottom: 80px;">
+						    @if(session('coupon'))
+						    	<div>
+						    		<ul>
+						    			@foreach(session('coupon') as $value)
+						    				@if($value['coupon_condition'] == 1)
+						    					@php
+						    						$totalCoupon += ($value['coupon_number']*$totalCart)/100
+						    					@endphp
+												<li>{{$value['coupon_name']}}<span>{{$value['coupon_number']}} %</span></li>
+											@elseif($value['coupon_condition'] == 2)
+												@php
+						    						$totalCoupon += $value['coupon_number']
+						    					@endphp
+												<li>{{$value['coupon_name']}}<span>{{$value['coupon_number']}} VNĐ</span></li>	
+											@endif
+										@endforeach
+									</ul>
+						    	</div>
+								<div style="border-bottom: 1px solid black;">
+									<button type="button" class="btn btn-link coupon_click">Chọn Voucher khác</button></span>	
+								</div>
+							@else
+								<div style="border-bottom: 1px solid black;">
+									<button type="button" class="btn btn-link coupon_click">Chọn Hoặc Nhập Mã</button></span>	
+								</div>	
+							@endif
 							<ul>
 								<li>Tổng <span class="total_cart_not_fee">{{$totalCart}}</span></li>
 								<li>Thuế <span class="total_fee">12</span></li>
 								<li>Phí vận chuyển<span>Free</span></li>
+								<li>Tổng giảm<span>{{$totalCoupon}}</span></li>
 								<li>Tổng tiền <span class="total_cart">{{$totalCart + 12}}</span></li>
 							</ul>
 							<button type="button" class="btn btn-default check_out check-user" data-toggle="modal">Thanh toán</button>
@@ -133,11 +166,98 @@
 		      </div>
 		    </div>
 		  </div>
-		</div>zz
+		</div>
+
+		<div class="modal fade" id="exampleModalCenter1" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle1" aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="exampleModalLongTitle">Các mã khuyến mãi</h5>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <div class="modal-body">
+		      	<form class="data-form2">
+		      		<div class="form-row align-items-center">
+					    <div class="col-sm-6 my-1">
+					      <label class="sr-only" for="inlineFormInputName">Tìm kiếm</label>
+					      <input type="text" class="form-control" id="inlineFormInputName" placeholder="Mã Voucher">
+					    </div>
+					    <div class="col-auto my-1">
+					      <button type="button" class="btn btn-info bnt_coupon_code">Áp dụng</button>
+					    </div>
+					</div>
+				</form>	
+					<br>
+		        	<form class="data-form1">
+		        		
+			        </form>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+		        <button type="button" class="btn btn-default submit_coupon">Save changes</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
 <script type="text/javascript">
 	$(document).ready(function(){
 		const minus = $('.add-down');
   		const plus = $('.add-up');
+  		var couponId = [];
+
+  		$('.coupon_click').click(function(){
+  			var url = '/get-coupon';
+		    var opiton = 'get';
+		    var data = {};
+
+		     _common.request(url, data, opiton)
+		    .then(function(response){
+		    	if(response.code == 200) {
+		    		return response.data;
+		    	}
+		    })
+		    .then(function(response){
+		    	$('#exampleModalCenter1').modal('show');
+		    	var opiton = "";
+		    	for(i in response){
+		    		opiton += '<div class="form-check form-check-inline">'
+		    		opiton += '<input class="form-check-input" type="checkbox" id="inlineCheckbox'+response[i]['coupon_id']+'" value="'+response[i]['coupon_id']+'"><label class="form-check-label" for="inlineCheckbox'+response[i]['coupon_id']+'">'+'&nbsp &nbsp' +response[i]['coupon_name'] +'</label>';
+		    		opiton += '</div>';
+		    	}
+ 		    	$('.data-form1').append(opiton)
+		    })
+  		})
+
+  		$(document).on('click','input[type="checkbox"]',function(){
+            if($(this).prop("checked") == true){
+                couponId.push($(this).val())
+            }
+            else if($(this).prop("checked") == false){
+            	var index = couponId.indexOf($(this).val());
+            	console.log(index)
+               if (index > -1) {
+				  couponId.splice(index, 1);
+				}
+            }
+        })
+
+  		$(document).on('click','.submit_coupon',function(){
+  			var url = '/check-coupon';
+		    var opiton = 'post';
+		    var data = {
+		    	'arr_id_coupon' : couponId,
+		    	'_token': '{{ csrf_token() }}'
+		    }
+
+		     _common.request(url, data, opiton)
+		    .then(function(response){
+		    	if(response.code == 200) {
+		    		console.log(response.data);
+		    	}
+		    })
+  		})
 
   		$('.check-user').click(function(e){
   			e.preventDefault();
@@ -335,58 +455,6 @@
 		    if(!x) x = 0;
 		    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 	  	}
-
-	  	$(".choose").change(function(){
-		  var setThis = $(this);
-		  var url = '';
-		  var opiton = '';
-		  var data = {};
-		  // console.log(address)
-		  if (setThis.attr('address') == 'provice') {
-			$('.provice').prop("disabled", true);
-			$('.wards').prop("disabled", true);
-			$('.wards').find('option').remove().end().append('<option value="">Chọn xã phường</option>')
-		  	data = {
-		  		matp: setThis.val(),
-		  		address : 'provice'
-		  	};
-		  } else if (setThis.attr('address') == 'wards') {
-		  		data = {
-		  		maqh: setThis.val(),
-		  		address : 'wards'
-		  	};
-		  }
-		  url = '/admin/get-address';
-		  opiton = 'GET';
-
-		     _common.request(url, data, opiton)
-		    .then(function(response){
-		    	var options = "";
-		    	if (response['check_provice'] == 'check_provice') {
-		    		options += '<option value="">Chọn quận huyện</option>';
-					for(i in response['provice']) {
-					    options += '<option value= "' + response['provice'][i]['maqh'] + '">' + response['provice'][i]['name_quanhuyen'] + '</option>';
-					}
-					$('#exampleFormControlSelect2').html(options);
-					$('.provice').prop("disabled", false);
-		    	} else {
-		    		options += '<option value="">Chọn xã phường</option>';
-					for(i in response['wards']) {
-					    options += '<option value= "' + response['wards'][i]['xaid'] + '">' + response['wards'][i]['name_xa'] + '</option>';
-					}
-					$('#exampleFormControlSelect3').html(options);
-					$('.wards').prop("disabled", false);
-		    	}
-		    })
-		});
-
-		$(".modal").on("hidden.bs.modal", function(){
-			$('.wards').find('option').remove().end().append('<option value="">Chọn xã phường</option>').prop("disabled", true);
-			$('.provice').find('option').remove().end().append('<option value="">Chọn quận huyện</option>').prop("disabled", true);
-		    $('.empty-value').each(function() {
-		    	$(this).val('');
-		    })
-		});
 	});	
 </script>		
 @endsection

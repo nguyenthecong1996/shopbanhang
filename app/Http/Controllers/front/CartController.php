@@ -15,6 +15,7 @@ use App\Models\City;
 use App\Models\Provice;
 use App\Models\Wards;
 use App\Models\TblUser;
+use App\Models\TblCoupon;
 
 
 class CartController extends Controller
@@ -78,6 +79,7 @@ class CartController extends Controller
         $getCategory = $this->category;
         $getBrand =  $this->brand;
         $data = $request->all();
+        // dd($data);
 
         $getDataFee = TblFeeShip::with('City', 'Provice', 'Wards')->where('fee_matp', $data['city'])->where('fee_maqh', $data['provice'])->where('fee_maxp', $data['wards'])->first();
 
@@ -114,7 +116,11 @@ class CartController extends Controller
         $getShipping->shipping_phone = $data['shipping_phone'];
         $getShipping->shipping_content = $data['shipping_content'];
         $getShipping->fee_ship = $getFeeShip;
-        $getShipping->check_default = 1;
+        if (isset($data['shipping_check_user'])) {
+            $getShipping->check_default = 0;
+        } else {
+             $getShipping->check_default = 1;
+        }
         $getShipping->user_id = Auth::guard('writer')->user()['id'];
         $getShipping->save();
         $getIdShippng = $getShipping->shipping_id;
@@ -126,21 +132,21 @@ class CartController extends Controller
 
         $getFee = $request->session()->get('fee');
 
-        return response()->json(['code' =>200]);
+        return response()->json(['code' =>200, 'getShipping' => $getShipping]);
     }
 
     public function Payment(Request $request){
         $getCategory = $this->category;
         $getBrand =  $this->brand;
+        $getCity = City::orderBy('name_thanhpho', 'asc')->get();
+        $id = Auth::guard('writer')->user()['id'];
         $getFee = session('fee');
         if (isset($getFee)) {
             $getAdd = TblShipping::where('shipping_id', $getFee['shipping_id'])->first();
             $request->session()->forget('fee');
         } else {
-            $id = Auth::guard('writer')->user()['id'];
-            $getAdd = TblShipping::where('user_id', $id)->latest('shipping_id')->first();
+            $getAdd = TblShipping::where('user_id', $id)->where('check_default', 1)->first();
         }
-
         $totalCart = 0;
         $getCart = session('cart');
         foreach ($getCart as $value) {
@@ -148,17 +154,66 @@ class CartController extends Controller
         }
         // get tat ca ban ghi
          $getAddAll = TblShipping::where('user_id', $id)->get();
-        return view('frontend.payment', compact('getCategory', 'getBrand', 'getAdd', 'totalCart', 'getAddAll'));
+        return view('frontend.payment', compact('getCategory', 'getBrand', 'getAdd', 'totalCart', 'getAddAll', 'getCity'));
     }
 
     public function checkUser(){
         $id = Auth::guard('writer')->user()['id'];
         $checkAuth = false;
-        $getData = TblShipping::where('user_id', $id)->latest('shipping_id')->first();
+        $getData = TblShipping::where('user_id', $id)->where('check_default', 1)->first();
         if (isset($getData)) {
             $checkAuth = true;
         }
 
         return response()->json($checkAuth);
+    }
+
+    public function handCash(){
+        $getCategory = $this->category;
+        $getBrand =  $this->brand;
+        return view('frontend.handcash', compact('getCategory', 'getBrand'));
+    }
+
+    public function getCoupon() {
+        $data = TblCoupon::get();
+        return response()->json(['code' =>200, 'data' => $data]);
+    }
+
+    public function checkCoupon(Request $request){
+        // $request->session()->forget('coupon');
+        
+        $data = $request->all();
+        $dataCheck = TblCoupon::whereIn('coupon_id', $data['arr_id_coupon'])->get();
+        if(isset($dataCheck)){
+            $getCoupon = $request->session()->get('coupon');
+            // dd($getCoupon);
+            if (isset($getCoupon)) {
+              foreach ($dataCheck as $item) {
+                    if (array_key_exists($item['coupon_id'], $getCoupon)) {
+                        continue;
+                    } else {
+                        $getCoupon[$item['coupon_id']] = array(
+                            'coupon_name' => $item['coupon_name'],
+                            'coupon_number' => $item['coupon_number'],
+                            'coupon_condition' => $item['coupon_condition'],
+                            'coupon_time' => $item['coupon_time']
+                        );
+                         $request->session()->put('coupon', $getCoupon);
+                    }
+                }  
+                
+            } else {
+                foreach ($dataCheck as $value) {
+                    $getCoupon[$value['coupon_id']] = array(
+                        'coupon_name' => $value['coupon_name'],
+                        'coupon_number' => $value['coupon_number'],
+                        'coupon_condition' => $value['coupon_condition'],
+                        'coupon_time' => $value['coupon_time']
+                    );
+                }
+                $request->session()->put('coupon', $getCoupon);
+            }
+        }
+        return response()->json(['code' =>200, 'data' => $getCoupon]);  
     }
 }

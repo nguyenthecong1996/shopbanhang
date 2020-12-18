@@ -17,4 +17,14 @@ class TblOrder extends Model
     {
         return $this->belongsTo('App\Models\TblUser', 'user_id', 'id');
     }
+
+    public function shipping()
+    {
+        return $this->belongsTo('App\Models\TblShipping', 'shipping_id', 'shipping_id');
+    }
+
+    public function orderDetail()
+    {
+        return $this->hasMany('App\Models\TblOrderDetail', 'order_id', 'order_id');
+    }
 }
