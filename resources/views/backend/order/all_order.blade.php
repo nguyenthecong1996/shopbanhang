@@ -17,11 +17,12 @@
                   <thead>
                     <tr>
                      	<th>Tên người gửi</th>
-			            <th>Tổng tiền</th>
-			            <th>Trạng thái</th>
-			            <th>Hiện thị</th>
-			            <th>Thời gian</th>
-                      	<th></th>
+                      <th>Tổng tiền</th>
+    			            <th>Tổng giảm khuyến mãi</th>
+    			            <th>Trạng thái</th>
+    			            <th>Hiện thị</th>
+    			            <th>Thời gian</th>
+                      <th></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -31,6 +32,9 @@
                         {{$value['name_user']}}
                       </td>
                       <td>{{$value['order_total']}}</td>
+                      <td>
+                        {{$value['total_coupon']}}
+                      </td>
                       <td>
                       	@foreach (config('common.order_status') as $key => $item)
                       		@if($value['order_status'] == $key)

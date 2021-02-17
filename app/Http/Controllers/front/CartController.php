@@ -175,45 +175,106 @@ class CartController extends Controller
     }
 
     public function getCoupon() {
-        $data = TblCoupon::get();
+        $data = TblCoupon::where('coupon_id', 4)->get();
         return response()->json(['code' =>200, 'data' => $data]);
     }
 
     public function checkCoupon(Request $request){
         // $request->session()->forget('coupon');
-        
         $data = $request->all();
-        $dataCheck = TblCoupon::whereIn('coupon_id', $data['arr_id_coupon'])->get();
-        if(isset($dataCheck)){
-            $getCoupon = $request->session()->get('coupon');
-            // dd($getCoupon);
-            if (isset($getCoupon)) {
-              foreach ($dataCheck as $item) {
-                    if (array_key_exists($item['coupon_id'], $getCoupon)) {
-                        continue;
-                    } else {
-                        $getCoupon[$item['coupon_id']] = array(
-                            'coupon_name' => $item['coupon_name'],
-                            'coupon_number' => $item['coupon_number'],
-                            'coupon_condition' => $item['coupon_condition'],
-                            'coupon_time' => $item['coupon_time']
+        // dd($data);
+        if (isset($data['arr_id_coupon'])) {
+            $dataCheck = TblCoupon::whereIn('coupon_id', $data['arr_id_coupon'])->get();
+            if(isset($dataCheck)){
+                $getCoupon = $request->session()->get('coupon');
+                // dd($getCoupon);
+                if (isset($getCoupon)) {
+                  foreach ($dataCheck as $item) {
+                        if (array_key_exists($item['coupon_id'], $getCoupon)) {
+                            continue;
+                        } else {
+                            $getCoupon[$item['coupon_id']] = array(
+                                'coupon_name' => $item['coupon_name'],
+                                'coupon_number' => $item['coupon_number'],
+                                'coupon_condition' => $item['coupon_condition'],
+                                'coupon_time' => $item['coupon_time']
+                            );
+                             $request->session()->put('coupon', $getCoupon);
+                        }
+                    }  
+                    
+                } else {
+                    foreach ($dataCheck as $value) {
+                        $getCoupon[$value['coupon_id']] = array(
+                            'coupon_name' => $value['coupon_name'],
+                            'coupon_number' => $value['coupon_number'],
+                            'coupon_condition' => $value['coupon_condition'],
+                            'coupon_time' => $value['coupon_time']
                         );
-                         $request->session()->put('coupon', $getCoupon);
                     }
-                }  
-                
-            } else {
-                foreach ($dataCheck as $value) {
-                    $getCoupon[$value['coupon_id']] = array(
-                        'coupon_name' => $value['coupon_name'],
-                        'coupon_number' => $value['coupon_number'],
-                        'coupon_condition' => $value['coupon_condition'],
-                        'coupon_time' => $value['coupon_time']
-                    );
+                    $request->session()->put('coupon', $getCoupon);
                 }
-                $request->session()->put('coupon', $getCoupon);
             }
+            return response()->json(['code' =>200]);   
+        } else {
+            if(isset($data['arr_id_remove'])) {
+                foreach ($data['arr_id_remove'] as $value) {
+                    $request->session()->forget('coupon.'.$value);
+                    $request->session()->forget('searchCoupon.'.$value);
+                }
+                return response()->json(['check' => true]);
+            } else {
+                return response()->json();
+            } 
+        }  
+    }
+
+    public function searchCoupon(Request $request){
+        $data = $request->all();
+        $coupon_code = strtolower($data['coupon_code']);
+        $getData = TblCoupon::where('coupon_code', $coupon_code)->first();
+        $getCoupon = $request->session()->get('coupon');
+        $getCoupon1 = $request->session()->get('searchCoupon');
+        if(isset($getData)){
+            if (isset($getCoupon)) {
+                if (array_key_exists($getData['coupon_id'], $getCoupon)) {
+                    return response()->json(['message' => 'Mã đã dùng']);
+                } else {
+                    $getCoupon[$getData['coupon_id']] = array(
+                        'coupon_name' => $getData['coupon_name'],
+                        'coupon_number' => $getData['coupon_number'],
+                        'coupon_condition' => $getData['coupon_condition'],
+                        'coupon_time' => $getData['coupon_time']
+                    );
+
+                    $getCoupon1[$getData['coupon_id']] = array(
+                        'coupon_name' => $getData['coupon_name'],
+                        'coupon_number' => $getData['coupon_number'],
+                        'coupon_condition' => $getData['coupon_condition'],
+                        'coupon_time' => $getData['coupon_time']
+                    );
+                     $request->session()->put('searchCoupon', $getCoupon1);
+                     $request->session()->put('coupon', $getCoupon);
+                }
+            } else {
+                $getCoupon[$getData['coupon_id']] = array(
+                    'coupon_name' => $getData['coupon_name'],
+                    'coupon_number' => $getData['coupon_number'],
+                    'coupon_condition' => $getData['coupon_condition'],
+                    'coupon_time' => $getData['coupon_time']
+                );
+                $getCoupon1[$getData['coupon_id']] = array(
+                    'coupon_name' => $getData['coupon_name'],
+                    'coupon_number' => $getData['coupon_number'],
+                    'coupon_condition' => $getData['coupon_condition'],
+                    'coupon_time' => $getData['coupon_time']
+                );
+            }
+            $request->session()->put('coupon', $getCoupon);
+            $request->session()->put('searchCoupon', $getCoupon1);
+            return response()->json(['code' => 200]);
+        } else {
+            return response()->json(['message' => 'Sai mã code']);
         }
-        return response()->json(['code' =>200, 'data' => $getCoupon]);  
     }
 }

@@ -30,7 +30,6 @@ class AuthController extends Controller
         $arr = [
             'email' => $request->txtEmail,
             'password' => $request->txtPassword,
-            'role' => 9,
         ];
         if (Auth::guard('admin')->attempt($arr)){
             return redirect('admin/dashboard');
@@ -91,7 +90,6 @@ class AuthController extends Controller
             'email' => strtolower($data['email']),
             'password' => $password,
             'phone' => '',
-            'role' => 2
         ]);
 
         return Redirect::to('/login')->with('message','đăng kí thành công');

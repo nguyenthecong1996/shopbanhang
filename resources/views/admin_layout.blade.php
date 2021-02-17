@@ -108,6 +108,13 @@
           <span>Đơn hàng</span>
         </a>
       </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{{url('admin/all-user')}}">
+          <i class="fas fa-fw fa-wrench"></i>
+          <span>Quản lí người dùng</span>
+        </a>
+      </li>
       <!-- Divider -->
       <hr class="sidebar-divider d-none d-md-block">
 

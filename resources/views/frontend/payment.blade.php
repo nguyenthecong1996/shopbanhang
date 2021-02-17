@@ -64,6 +64,18 @@
 		</div>
 	</div>
 </section>
+@php
+	$totalCoupon =0;
+	if(session('coupon')){
+		foreach(session('coupon') as $value) {
+			if($value['coupon_condition'] == 1){
+				$totalCoupon += ($value['coupon_number']*$totalCart)/100;
+			} elseif($value['coupon_condition'] == 2){
+				$totalCoupon += $value['coupon_number'];
+			}
+		}
+	}	
+@endphp
 <section id="do_action" >
 	<div class="container" style="width: 950px">
 		<div class="row">
@@ -71,9 +83,9 @@
 				<div class="total_area">
 					<ul>
 						<li>Tổng <span class="total_cart_not_fee">{{$totalCart}}</span></li>
-						<li>Thuế <span class="total_fee">12</span></li>
 						<li>Phí vận chuyển<span>{{$getAdd['fee_ship']}}</span></li>
-						<li>Tổng tiền <span class="total_cart">{{$totalCart + 12 + $getAdd['fee_ship']}}</span></li>
+						<li>Tổng giảm<span>{{$totalCoupon}}</span></li>						
+						<li>Tổng tiền <span class="total_cart">{{$totalCart + $getAdd['fee_ship']}}</span></li>
 					</ul>
 				</div>
 			</div>
@@ -97,7 +109,10 @@
 					<span>
 						<label><input name="payment_option" value="3" type="radio"> Thanh toán thẻ ghi nợ</label>
 					</span>
-					<input name="total_cart" value="{{$totalCart + 12 + $getAdd['fee_ship']}}" type="hidden">
+					<input name="total_cart" value="{{$totalCart + $getAdd['fee_ship']}}" type="hidden">
+					<input name="fee_ship" value="{{$getAdd['fee_ship']}}" type="hidden">
+					<input name="total_coupon" value="{{$totalCoupon}}" type="hidden">
+
 					<button  type="button" class="btn btn-primary btn-sm payment_btn">Đặt hàng</button>
 				</div>
 		</form>
@@ -230,6 +245,9 @@
 			var add_option = check_id;
 			var payment_option = $('input[name=payment_option]:checked').val();
 			var total_cart = $('input[name=total_cart]').val();
+			var fee_ship = $('input[name=fee_ship]').val();
+			var total_coupon = $('input[name=total_coupon]').val();
+
 			var url = '/admin/order-place';
 		    var opiton = 'post';
 		    var data = {
@@ -238,7 +256,10 @@
 		    	'total_cart' : total_cart,
 		    	'_token': '{{ csrf_token() }}'
 		    };
-
+		    if (fee_ship) {
+		    	data['fee_ship'] = fee_ship;
+		    	data['total_coupon'] = total_coupon;
+		    }
 		     _common.request(url, data, opiton)
 		    .then(function(response){
 		    	if (response.code == 200) {

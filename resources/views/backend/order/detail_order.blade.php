@@ -16,7 +16,7 @@
         <tbody>
           <tr>
             <td>
-                {{$getUser['name']}}
+                {{$dataAll['getUser']['name']}}
             </td>
           </tr>
         </tbody>
@@ -41,13 +41,13 @@
         <tbody>
            <tr>
             <td>
-              {{$getInfoShipping['shipping_name']}}
+              {{$dataAll['getInfoShipping']['shipping_name']}}
             </td>
              <td>
-              {{$getInfoShipping['shipping_phone']}}
+              {{$dataAll['getInfoShipping']['shipping_phone']}}
             </td>
              <td>
-              {{$getInfoShipping['shipping_address']}}
+              {{$dataAll['getInfoShipping']['shipping_address']}}
             </td>
           </tr>
         </tbody>
@@ -64,6 +64,7 @@
             <tr>
               <th>STT</th>
               <th>Tên sản phẩm</th>
+              <th>Mã giám giá</th>
               <th>Số lượng</th>
               <th>Gía tiền</th>
               <th>Tổng tiền</th>
@@ -76,13 +77,20 @@
             $i = 0;
           @endphp
           <tbody>
-            @foreach($getOrderDetail as $item)
+            @foreach($dataAll['getOrderDetail'] as $item)
               @php
                 $total += $item->product_price*$item->product_sales_quantity;
               @endphp
             <tr>
               <td>{{$i++}}</td>
               <td>{{$item->product_name}}</td>
+              <td>
+                @if(isset($dataAll['stringCoupon']))
+                  {{$dataAll['stringCoupon']}}
+                @else
+                  Không mã  
+                @endif  
+              </td>
               <td>{{$item->product_sales_quantity}}</td>
               <td>{{$item->product_price}}</td>
               <td>{{$item->product_price*$item->product_sales_quantity}}</td>
@@ -90,7 +98,13 @@
           @endforeach
             <tr>
               <td>
-                Tổng tiền : {{$total}}    
+                Tổng tiền ban đầu: {{$total}}    
+              </td>
+              <td>
+                Tổng giảm : {{$dataAll['userid']['total_coupon']}}    
+              </td>
+              <td>
+                Tổng tiền : {{$total - $dataAll['userid']['total_coupon']}}    
               </td>
             </tr>
           </tbody>

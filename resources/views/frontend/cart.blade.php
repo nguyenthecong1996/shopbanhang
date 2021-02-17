@@ -96,10 +96,8 @@
 							@endif
 							<ul>
 								<li>Tổng <span class="total_cart_not_fee">{{$totalCart}}</span></li>
-								<li>Thuế <span class="total_fee">12</span></li>
-								<li>Phí vận chuyển<span>Free</span></li>
 								<li>Tổng giảm<span>{{$totalCoupon}}</span></li>
-								<li>Tổng tiền <span class="total_cart">{{$totalCart + 12}}</span></li>
+								<li>Tổng tiền <span class="total_cart">{{$totalCart}}</span></li>
 							</ul>
 							<button type="button" class="btn btn-default check_out check-user" data-toggle="modal">Thanh toán</button>
 						</div>
@@ -179,13 +177,14 @@
 		      </div>
 		      <div class="modal-body">
 		      	<form class="data-form2">
-		      		<div class="form-row align-items-center">
+		      		{{ csrf_field() }}
+		      		<div class="form-row align-items-center check-coupon1">
 					    <div class="col-sm-6 my-1">
 					      <label class="sr-only" for="inlineFormInputName">Tìm kiếm</label>
-					      <input type="text" class="form-control" id="inlineFormInputName" placeholder="Mã Voucher">
+					      <input type="text" class="form-control change_search" id="inlineFormInputName" name="coupon_code" placeholder="Mã Voucher">
 					    </div>
 					    <div class="col-auto my-1">
-					      <button type="button" class="btn btn-info bnt_coupon_code">Áp dụng</button>
+					      <input type="button" class="btn btn-info bnt_coupon_code search_coupon" value="Áp dụng" disabled>
 					    </div>
 					</div>
 				</form>	
@@ -200,12 +199,39 @@
 		      </div>
 		    </div>
 		  </div>
-		</div>
+		</div>	
 <script type="text/javascript">
 	$(document).ready(function(){
+		var data1 = <?php echo json_encode(session('coupon')); ?>;
+		var data2 = <?php echo json_encode(session('searchCoupon')); ?>;
 		const minus = $('.add-down');
   		const plus = $('.add-up');
   		var couponId = [];
+  		var removeId = [];
+  		var temp = [];
+
+  		$('.change_search').change(function(){
+  			$('.search_coupon').prop('disabled', false);
+  			if(!$(this).val()){
+  				$('.search_coupon').prop('disabled', true);
+  			}
+  		})
+
+  		$('.search_coupon').click(function(){
+  			var url = '/search-coupon';
+		    var opiton = 'post';
+		    var data = $('.data-form2').serialize();
+		    _common.request(url, data, opiton)
+		    .then(function(response){
+		    	if (response.code == 200) {
+		    		location.reload();
+		    	} else {
+		    		var opiton = "";
+		    		opiton += '<p  class="text-danger">'+response.message+'</p>';
+		    		$('.check-coupon1').append(opiton)
+		    	}
+		    })
+  		})
 
   		$('.coupon_click').click(function(){
   			var url = '/get-coupon';
@@ -221,9 +247,31 @@
 		    .then(function(response){
 		    	$('#exampleModalCenter1').modal('show');
 		    	var opiton = "";
+		    	if (data1) {
+		    		for(x in data1) {
+		    			temp.push(x)
+		    		}
+		    	}
+
+		    	if(data2){
+		    		for (i in data2){
+		    			opiton += '<div class="form-check form-check-inline">'
+		    				opiton += '<input class="form-check-input" type="checkbox" id="inlineCheckbox'+i+'" value="'+i+'" checked><label class="form-check-label" for="inlineCheckbox'+i+'">'+'&nbsp &nbsp' +data2[i]['coupon_name'] +'</label>';
+		    			opiton += '</div>';
+		    		}
+		    	}
 		    	for(i in response){
 		    		opiton += '<div class="form-check form-check-inline">'
-		    		opiton += '<input class="form-check-input" type="checkbox" id="inlineCheckbox'+response[i]['coupon_id']+'" value="'+response[i]['coupon_id']+'"><label class="form-check-label" for="inlineCheckbox'+response[i]['coupon_id']+'">'+'&nbsp &nbsp' +response[i]['coupon_name'] +'</label>';
+		    		if (data1) {
+		    			var t = temp.indexOf(response[i]['coupon_id'].toString())
+		    			if (t > -1){
+		    				opiton += '<input class="form-check-input" type="checkbox" id="inlineCheckbox'+response[i]['coupon_id']+'" value="'+response[i]['coupon_id']+'" checked><label class="form-check-label" for="inlineCheckbox'+response[i]['coupon_id']+'">'+'&nbsp &nbsp' +response[i]['coupon_name'] +'</label>';
+		    			}else {
+		    				opiton += '<input class="form-check-input" type="checkbox" id="inlineCheckbox'+response[i]['coupon_id']+'" value="'+response[i]['coupon_id']+'"><label class="form-check-label" for="inlineCheckbox'+response[i]['coupon_id']+'">'+'&nbsp &nbsp' +response[i]['coupon_name'] +'</label>';
+		    			}
+		    		} else {
+		    			opiton += '<input class="form-check-input" type="checkbox" id="inlineCheckbox'+response[i]['coupon_id']+'" value="'+response[i]['coupon_id']+'"><label class="form-check-label" for="inlineCheckbox'+response[i]['coupon_id']+'">'+'&nbsp &nbsp' +response[i]['coupon_name'] +'</label>';
+		    		}
 		    		opiton += '</div>';
 		    	}
  		    	$('.data-form1').append(opiton)
@@ -232,33 +280,53 @@
 
   		$(document).on('click','input[type="checkbox"]',function(){
             if($(this).prop("checked") == true){
+            	var index1 = removeId.indexOf($(this).val());
                 couponId.push($(this).val())
+                if (index1 > -1) {
+				  removeId.splice(index1, 1);
+				}
+				console.log(removeId)
+
             }
             else if($(this).prop("checked") == false){
             	var index = couponId.indexOf($(this).val());
-            	console.log(index)
+            	 removeId.push($(this).val())
                if (index > -1) {
 				  couponId.splice(index, 1);
 				}
+				console.log(removeId)
+
+
             }
         })
-
   		$(document).on('click','.submit_coupon',function(){
   			var url = '/check-coupon';
 		    var opiton = 'post';
+		    var idCheck;
 		    var data = {
 		    	'arr_id_coupon' : couponId,
+		    	'arr_id_remove' : removeId,
 		    	'_token': '{{ csrf_token() }}'
 		    }
-
 		     _common.request(url, data, opiton)
 		    .then(function(response){
 		    	if(response.code == 200) {
-		    		console.log(response.data);
+		    		location.reload();
+		    	} else {
+		    		if(response.check == true){
+						 for (x in removeId){
+				            var index = temp.indexOf(removeId[x]);
+				            if (index > -1) {
+								temp.splice(index, 1);
+							}
+						 }
+		    			location.reload();
+		    		} else {
+		    			$('#exampleModalCenter1').modal('hide');
+		    		}
 		    	}
 		    })
   		})
-
   		$('.check-user').click(function(e){
   			e.preventDefault();
 		    var url = '/check-user';

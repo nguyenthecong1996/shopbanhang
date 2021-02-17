@@ -16,11 +16,11 @@ class checkAdminLogin
      */
     public function handle(Request $request, Closure $next)
     {
-        if (Auth::check()){
-            $user = Auth::user();
-            if ($user->role == 9) {
+        if (Auth::guard('admin')->check()){
+            // $user = Auth::user();
+            // if ($user->role == 9) {
                 return $next($request);
-            }
+            // }
             
         } else {
             return redirect('/login');
